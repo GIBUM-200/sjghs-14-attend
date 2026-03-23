@@ -2,507 +2,259 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>주말 외출·외박 신청</title>
+  <title>학교 자율학습 출석부</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body { font-family: Arial, sans-serif; margin: 0; background: #f6f7fb; color: #222; }
-    .wrap { max-width: 920px; margin: 24px auto; padding: 16px; }
-    .card { background: #fff; border-radius: 16px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,.08); margin-bottom: 16px; }
-    h1 { font-size: 24px; margin: 0 0 12px; }
-    h2 { font-size: 18px; margin: 0 0 12px; }
-    h3 { font-size: 16px; margin: 18px 0 10px; }
-    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-    .field { display: flex; flex-direction: column; gap: 6px; }
-    .field.full { grid-column: 1 / -1; }
-    label { font-weight: 600; }
-    input[type="text"], select {
-      padding: 10px 12px;
-      border: 1px solid #ccd2e0;
-      border-radius: 10px;
-      font-size: 14px;
+    /* 기본 스타일 */
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 0;
+    }
+    /* 상단 배너 */
+    .header-banner {
+      text-align: center;
+      margin-bottom: 20px;
       background: #fff;
-      box-sizing: border-box;
-      width: 100%;
+      padding: 10px 0;
     }
-    .checks { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
-    .checks label {
-      font-weight: 400;
+    .header-banner img {
+      max-width: 100%;
+      height: auto;
+      display: inline-block;
+    }
+    /* 컨테이너 */
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 10px;
+    }
+    form div {
+      margin-bottom: 15px;
       display: flex;
-      align-items: center;
-      gap: 6px;
-      background: #f7f9fc;
-      padding: 8px 10px;
-      border-radius: 10px;
+      flex-direction: column;
     }
-    .btns { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+    label {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    input[type="text"],
+    select,
     button {
-      border: none;
-      border-radius: 10px;
-      padding: 10px 16px;
-      font-size: 14px;
-      cursor: pointer;
-      background: #1f5eff;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+    button {
+      background: #007BFF;
       color: #fff;
+      border: none;
+      cursor: pointer;
+      margin-top: 10px;
     }
-    button.secondary { background: #6b7280; }
-    button.ghost { background: #eef2ff; color: #1f3fb0; }
-    .hidden { display: none; }
-    .preview {
-      background: #f8fafc;
-      border: 1px solid #dbe4f0;
-      border-radius: 12px;
-      padding: 14px;
-      white-space: pre-line;
-      line-height: 1.65;
+    button:hover {
+      background: #0056b3;
     }
-    .msg { margin-top: 10px; font-size: 14px; }
-    .ok { color: #0a7a34; }
-    .err { color: #c62828; }
-    .note { font-size: 13px; color: #5b6475; margin-top: 6px; }
-    @media (max-width: 700px) {
-      .grid, .checks { grid-template-columns: 1fr; }
+    /* 추가 입력 필드 (기타 선택 시 보임) */
+    .other-input {
+      display: none;
+      margin-top: 5px;
+      padding: 8px;
+      border: 1px solid #aaa;
+      border-radius: 4px;
+      font-size: 0.9rem;
+    }
+    @media (max-width: 600px) {
+      .container {
+        max-width: 95%;
+        margin: 10px auto;
+        padding: 15px;
+      }
     }
   </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="card">
-    <h1>주말 외출·외박 신청</h1>
-    <div class="grid">
-      <div class="field">
-        <label for="className">반</label>
-        <select id="className">
-          <option value="">선택</option>
-          <option value="1-1">1-1</option>
-          <option value="1-2">1-2</option>
-          <option value="1-3">1-3</option>
-          <option value="1-4">1-4</option>
-          <option value="1-5">1-5</option>
+  <!-- 상단 배너 이미지 -->
+  <div class="header-banner">
+    <img src="https://topelite.co.kr/data/file/gallery/thumb-2e633af12c46843b976cdf498241790c_6Yr7OmqI_b3272527febfc64d7a0debbc5fef220f8fdf6c6c_835x835.jpg" alt="배너 이미지">
+  </div>
+  
+  <div class="container">
+    <h1>학교 자율학습 출석부</h1>
+    <!-- 학생 정보 입력 폼 -->
+    <form id="attendanceForm">
+      <div>
+        <label for="studentId">학번 (예: 1234)</label>
+        <!-- 학번은 4자리 숫자만 입력되도록 -->
+        <input type="text" id="studentId" name="studentId" pattern="^\d{4}$" maxlength="4" required>
+      </div>
+      <div>
+        <label for="name">이름</label>
+        <input type="text" id="name" name="name" required>
+      </div>
+      <!-- 8교시 자습 장소 -->
+      <div>
+        <label for="period8">8교시 자습 장소</label>
+        <select id="period8" name="period8" required>
+          <option value="">선택하세요</option>
+          <option value="교실">교실</option>
+          <option value="강의실 4">강의실 4</option>
+          <option value="아고라(교무실 옆)">아고라(교무실 옆)</option>
+          <option value="아고라(3~4반 사이)">아고라(3~4반 사이)</option>
+          <option value="아고라(강의실 1옆)">아고라(강의실 1옆)</option>
+          <option value="시청각실">시청각실</option>
+          <option value="지성의 계단">지성의 계단</option>
+          <option value="한우리관(강당)">한우리관(강당)</option>
+          <option value="과학실">과학실</option>
+          <option value="무한상상실">무한상상실</option>
+          <option value="외출">외출</option>
+          <option value="외박">외박</option>
+          <option value="기타">기타</option>
         </select>
+        <input type="text" id="otherPeriod8" name="otherPeriod8" class="other-input" placeholder="예: 교무실(상담)">
       </div>
-
-      <div class="field">
-        <label for="studentId">학번</label>
-        <input type="text" id="studentId" placeholder="예: 1102">
+      <!-- 9교시 자습 장소 -->
+      <div>
+        <label for="period9">9교시 자습 장소</label>
+        <select id="period9" name="period9" required>
+          <option value="">선택하세요</option>
+          <option value="교실">교실</option>
+          <option value="강의실 4">강의실 4</option>
+          <option value="아고라(교무실 옆)">아고라(교무실 옆)</option>
+          <option value="아고라(3~4반 사이)">아고라(3~4반 사이)</option>
+          <option value="아고라(강의실 1옆)">아고라(강의실 1옆)</option>
+          <option value="시청각실">시청각실</option>
+          <option value="지성의 계단">지성의 계단</option>
+          <option value="한우리관(강당)">한우리관(강당)</option>
+          <option value="과학실">과학실</option>
+          <option value="무한상상실">무한상상실</option>
+          <option value="외출">외출</option>
+          <option value="외박">외박</option>
+          <option value="기타">기타</option>
+        </select>
+        <input type="text" id="otherPeriod9" name="otherPeriod9" class="other-input" placeholder="예: 교무실(상담)">
       </div>
-
-      <div class="field">
-        <label for="studentName">이름</label>
-        <input type="text" id="studentName" placeholder="예: 강리우">
+      <!-- 10교시 자습 장소 -->
+      <div>
+        <label for="period10">10교시 자습 장소</label>
+        <select id="period10" name="period10" required>
+          <option value="">선택하세요</option>
+          <option value="교실">교실</option>
+          <option value="강의실 4">강의실 4</option>
+          <option value="아고라(교무실 옆)">아고라(교무실 옆)</option>
+          <option value="아고라(3~4반 사이)">아고라(3~4반 사이)</option>
+          <option value="아고라(강의실 1옆)">아고라(강의실 1옆)</option>
+          <option value="시청각실">시청각실</option>
+          <option value="지성의 계단">지성의 계단</option>
+          <option value="한우리관(강당)">한우리관(강당)</option>
+          <option value="과학실">과학실</option>
+          <option value="무한상상실">무한상상실</option>
+          <option value="외출">외출</option>
+          <option value="외박">외박</option>
+          <option value="기타">기타</option>
+        </select>
+        <input type="text" id="otherPeriod10" name="otherPeriod10" class="other-input" placeholder="예: 교무실(상담)">
       </div>
-
-      <div class="field">
-        <label>&nbsp;</label>
-        <button type="button" class="ghost" onclick="checkStudent()">학생 정보 확인</button>
+      <!-- 11교시 자습 장소 -->
+      <div>
+        <label for="period11">11교시 자습 장소</label>
+        <select id="period11" name="period11" required>
+          <option value="">선택하세요</option>
+          <option value="교실">교실</option>
+          <option value="강의실 4">강의실 4</option>
+          <option value="아고라(교무실 옆)">아고라(교무실 옆)</option>
+          <option value="아고라(3~4반 사이)">아고라(3~4반 사이)</option>
+          <option value="아고라(강의실 1옆)">아고라(강의실 1옆)</option>
+          <option value="시청각실">시청각실</option>
+          <option value="지성의 계단">지성의 계단</option>
+          <option value="과학실">과학실</option>
+          <option value="한우리관(강당)">한우리관(강당)</option>
+          <option value="무한상상실">무한상상실</option>
+          <option value="외출">외출</option>
+          <option value="외박">외박</option>
+          <option value="기타">기타</option>
+        </select>
+        <input type="text" id="otherPeriod11" name="otherPeriod11" class="other-input" placeholder="예: 교무실(상담)">
       </div>
-    </div>
-
-    <div id="studentMsg" class="msg"></div>
+      
+      <!-- 제출 버튼 (미리보기 없이 바로 제출) -->
+      <button type="submit">제출</button>
+    </form>
   </div>
 
-  <div id="formCard" class="card hidden">
-    <h2>주말 계획 입력</h2>
-
-    <div class="grid">
-      <div class="field">
-        <label for="commonChoice">공통 선택</label>
-        <select id="commonChoice" onchange="toggleFields()">
-          <option value="">전체귀가</option>
-          <option value="O">O (잔류)</option>
-          <option value="♣">♣ (금요일 귀가)</option>
-          <option value="△">△ (토요일 귀가)</option>
-          <option value="통학">통학 (통학자)</option>
-        </select>
-      </div>
-
-      <div class="field hidden" id="fridayWrap">
-        <label for="fridayTime">금요일 귀가시간</label>
-        <select id="fridayTime">
-          <option value="">선택</option>
-          <option value="16:40">16:40</option>
-          <option value="18:20">18:20</option>
-          <option value="21:00">21:00</option>
-          <option value="23:20">23:20</option>
-        </select>
-      </div>
-
-      <div class="field hidden" id="saturdayWrap">
-        <label for="saturdayTime">토요일 귀가시간</label>
-        <select id="saturdayTime">
-          <option value="">선택</option>
-          <option value="(토) 9:00 이전">(토) 9:00 이전</option>
-          <option value="(토) 12:50-2교시 후">(토) 12:50-2교시 후</option>
-          <option value="(토) 17:30-4교시 후">(토) 17:30-4교시 후</option>
-          <option value="(토) 21:00">(토) 21:00</option>
-          <option value="(토) 23:00">(토) 23:00</option>
-        </select>
-      </div>
-
-      <div class="field hidden" id="returnWrap">
-        <label for="returnTime">복귀시간</label>
-        <select id="returnTime">
-          <option value="">선택</option>
-          <option value="(토) 17:30~19:00">(토) 17:30~19:00</option>
-          <option value="(토) 21:00~21:30">(토) 21:00~21:30</option>
-          <option value="(토) 23:00~23:30">(토) 23:00~23:30</option>
-          <option value="(일) 17:30~19:00">(일) 17:30~19:00</option>
-          <option value="(일) 21:00~21:30">(일) 21:00~21:30</option>
-          <option value="(일) 23:00~23:30">(일) 23:00~23:30</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="field full hidden" id="mealWrap">
-      <label>식사 신청</label>
-      <div class="checks" id="mealChecks">
-        <label><input type="checkbox" value="(토) 조식"> (토) 조식</label>
-        <label><input type="checkbox" value="(토) 중식"> (토) 중식</label>
-        <label><input type="checkbox" value="(토) 석식"> (토) 석식</label>
-        <label><input type="checkbox" value="(일) 조식"> (일) 조식</label>
-        <label><input type="checkbox" value="(일) 중식"> (일) 중식</label>
-        <label><input type="checkbox" value="(일) 석식"> (일) 석식</label>
-      </div>
-      <div class="note">잔류(O)는 잔류자, 토요일 귀가자의 외부 식당 이용신청 가능, 토요일 귀가(△)는 토요일 외부 식당 이용신청 가능 신청 가능합니다.</div>
-    </div>
-
-    <div id="satOutingSection" class="hidden">
-      <h3>토요일 외출</h3>
-      <div class="grid">
-        <div class="field">
-          <label for="satOutingReason">토요일 외출 사유</label>
-          <input type="text" id="satOutingReason" placeholder="예: 학원">
-        </div>
-        <div class="field">
-          <label for="satOutingDepartTime">토요일 출발 시간</label>
-          <input type="text" id="satOutingDepartTime" placeholder="예: 11:10">
-        </div>
-        <div class="field">
-          <label for="satOutingReturnTime">토요일 복귀 시간</label>
-          <input type="text" id="satOutingReturnTime" placeholder="예: 17:30">
-        </div>
-      </div>
-      <div class="note">토요일 외출은 잔류(O) 또는 토요일 귀가(△) 학생이 입력할 수 있습니다.</div>
-    </div>
-
-    <div id="sunOutingSection" class="hidden">
-      <h3>일요일 외출</h3>
-      <div class="grid">
-        <div class="field">
-          <label for="sunOutingReason">일요일 외출 사유</label>
-          <input type="text" id="sunOutingReason" placeholder="예: 병원">
-        </div>
-        <div class="field">
-          <label for="sunOutingDepartTime">일요일 출발 시간</label>
-          <input type="text" id="sunOutingDepartTime" placeholder="예: 13:00">
-        </div>
-        <div class="field">
-          <label for="sunOutingReturnTime">일요일 복귀 시간</label>
-          <input type="text" id="sunOutingReturnTime" placeholder="예: 16:30">
-        </div>
-      </div>
-      <div class="note">일요일 외출은 잔류(O) 학생만 입력할 수 있습니다.</div>
-    </div>
-
-    <div class="btns">
-      <button type="button" onclick="makePreview()">입력 내용 확인</button>
-    </div>
-  </div>
-
-  <div id="previewCard" class="card hidden">
-    <h2>제출 전 확인</h2>
-    <div id="previewBox" class="preview"></div>
-    <div class="btns">
-      <button type="button" class="secondary" onclick="hidePreview()">수정하기</button>
-      <button type="button" onclick="submitForm()">최종 제출</button>
-    </div>
-    <div id="submitMsg" class="msg"></div>
-  </div>
-</div>
-
-<script>
-  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyfyuLeSXSiedVS3_hWDj_4V6rimPLmsBpp-LIPQttQbtuPrQ2SQL6y2Am9sxJ4Z-o0zw/exec';
-  let STUDENT_OK = false;
-
-  function getCommonChoiceLabel(value) {
-    if (value === 'O') return 'O (잔류)';
-    if (value === '♣') return '♣ (금요일 귀가)';
-    if (value === '△') return '△ (토요일 귀가)';
-    if (value === '통학') return '통학 (통학자)';
-    return '전체귀가';
-  }
-
-  function checkStudent() {
-    clearMsg('studentMsg');
-
-    const params = new URLSearchParams({
-      action: 'findStudent',
-      className: val('className'),
-      studentId: val('studentId'),
-      studentName: val('studentName')
-    });
-
-    fetch(`${SCRIPT_URL}?${params.toString()}`)
-      .then(r => r.json())
-      .then(res => {
-        if (res.found) {
-          STUDENT_OK = true;
-          setMsg('studentMsg', `${res.className} ${res.studentId} ${res.studentName} 학생이 확인되었습니다.`, true);
-          document.getElementById('formCard').classList.remove('hidden');
-        } else {
-          STUDENT_OK = false;
-          document.getElementById('formCard').classList.add('hidden');
-          document.getElementById('previewCard').classList.add('hidden');
-          setMsg('studentMsg', '반, 학번, 이름이 일치하는 학생을 찾지 못했습니다.', false);
-        }
-      })
-      .catch(err => {
-        STUDENT_OK = false;
-        setMsg('studentMsg', err.message || String(err), false);
-      });
-  }
-
-  function updateMealAvailability(choice) {
-    const checkboxes = document.querySelectorAll('#mealChecks input[type="checkbox"]');
-
-    checkboxes.forEach(el => {
-      const isSundayMeal = el.value.startsWith('(일)');
-
-      if (choice === '△' && isSundayMeal) {
-        el.checked = false;
-        el.disabled = true;
-        el.parentElement.style.opacity = '0.5';
-      } else if (choice === 'O' || choice === '△') {
-        el.disabled = false;
-        el.parentElement.style.opacity = '1';
+  <script>
+    // 선택 시 "기타"인 경우, 추가 입력란을 보이도록 처리 (예시로 placeholder가 이미 지정됨)
+    function toggleOtherInput(selectId, otherInputId) {
+      const selectElem = document.getElementById(selectId);
+      const otherInputElem = document.getElementById(otherInputId);
+      if (selectElem.value === "기타") {
+        otherInputElem.style.display = "block";
       } else {
-        el.checked = false;
-        el.disabled = true;
-        el.parentElement.style.opacity = '0.5';
-      }
-    });
-  }
-
-  function toggleFields() {
-    const choice = val('commonChoice');
-
-    toggle('fridayWrap', choice === '♣');
-    toggle('saturdayWrap', choice === '△');
-    toggle('returnWrap', choice === '' || choice === '♣' || choice === '△');
-    toggle('mealWrap', choice === 'O' || choice === '△');
-    toggle('satOutingSection', choice === 'O' || choice === '△');
-    toggle('sunOutingSection', choice === 'O');
-
-    if (choice !== '♣') document.getElementById('fridayTime').value = '';
-    if (choice !== '△') document.getElementById('saturdayTime').value = '';
-
-    if (choice !== '' && choice !== '♣' && choice !== '△') {
-      document.getElementById('returnTime').value = '';
-    }
-
-    if (choice !== 'O' && choice !== '△') clearMealChecks();
-
-    updateMealAvailability(choice);
-
-    if (choice !== 'O' && choice !== '△') {
-      document.getElementById('satOutingReason').value = '';
-      document.getElementById('satOutingDepartTime').value = '';
-      document.getElementById('satOutingReturnTime').value = '';
-    }
-
-    if (choice !== 'O') {
-      document.getElementById('sunOutingReason').value = '';
-      document.getElementById('sunOutingDepartTime').value = '';
-      document.getElementById('sunOutingReturnTime').value = '';
-    }
-  }
-
-  function validateBeforePreview(data) {
-    if (!STUDENT_OK) return '먼저 학생 정보를 확인하세요.';
-    if (!data.className) return '반을 선택하세요.';
-    if (!data.studentId) return '학번을 입력하세요.';
-    if (!data.studentName) return '이름을 입력하세요.';
-
-    if (data.commonChoice === '♣' && !data.fridayTime) {
-      return '금요일 귀가자는 금요일 귀가시간을 선택해야 합니다.';
-    }
-
-    if (data.commonChoice === '△' && !data.saturdayTime) {
-      return '토요일 귀가자는 토요일 귀가시간을 선택해야 합니다.';
-    }
-
-    if ((data.commonChoice === '' || data.commonChoice === '♣' || data.commonChoice === '△') && !data.returnTime) {
-      return '전체귀가/금요일 귀가/토요일 귀가 학생은 복귀시간을 반드시 입력해야 합니다.';
-    }
-
-    const hasSatOuting = [
-      data.satOutingReason,
-      data.satOutingDepartTime,
-      data.satOutingReturnTime
-    ].some(v => (v || '').trim());
-
-    const hasSunOuting = [
-      data.sunOutingReason,
-      data.sunOutingDepartTime,
-      data.sunOutingReturnTime
-    ].some(v => (v || '').trim());
-
-    if (hasSatOuting && !['O', '△'].includes(data.commonChoice)) {
-      return '토요일 외출 입력은 잔류(O) 또는 토요일 귀가(△) 학생만 가능합니다.';
-    }
-
-    if (hasSunOuting && data.commonChoice !== 'O') {
-      return '일요일 외출 입력은 잔류(O) 학생만 가능합니다.';
-    }
-
-    const sundayMeals = ['(일) 조식', '(일) 중식', '(일) 석식'];
-    if (data.commonChoice === '△') {
-      const hasSundayMeal = data.meals.some(meal => sundayMeals.includes(meal));
-      if (hasSundayMeal) {
-        return '토요일 귀가자는 일요일 외부 식당 이용을 신청할 수 없습니다.';
+        otherInputElem.style.display = "none";
+        otherInputElem.value = ""; // 값 초기화
       }
     }
-
-    return '';
-  }
-
-  function makePreview() {
-    const data = collectForm();
-    const error = validateBeforePreview(data);
-
-    if (error) {
-      setMsg('studentMsg', error, false);
-      document.getElementById('previewCard').classList.add('hidden');
-      return;
-    }
-
-    clearMsg('studentMsg');
-
-    const meals = data.meals.length ? data.meals.join(', ') : '없음';
-    const satOuting = [data.satOutingReason, [data.satOutingDepartTime, data.satOutingReturnTime].filter(Boolean).join('~')]
-      .filter(Boolean).join(' / ') || '없음';
-    const sunOuting = [data.sunOutingReason, [data.sunOutingDepartTime, data.sunOutingReturnTime].filter(Boolean).join('~')]
-      .filter(Boolean).join(' / ') || '없음';
-
-    const text = [
-      `반: ${data.className}`,
-      `학번: ${data.studentId}`,
-      `이름: ${data.studentName}`,
-      `공통선택: ${getCommonChoiceLabel(data.commonChoice)}`,
-      `금요일 귀가시간: ${data.fridayTime || '없음'}`,
-      `토요일 귀가시간: ${data.saturdayTime || '없음'}`,
-      `복귀시간: ${data.returnTime || '없음'}`,
-      `식사 신청: ${meals}`,
-      `토요일 외출: ${satOuting}`,
-      `일요일 외출: ${sunOuting}`
-    ].join('\n');
-
-    document.getElementById('previewBox').textContent = text;
-    document.getElementById('previewCard').classList.remove('hidden');
-    clearMsg('submitMsg');
-  }
-
-  function hidePreview() {
-    document.getElementById('previewCard').classList.add('hidden');
-  }
-
-  function submitForm() {
-    const data = collectForm();
-    const error = validateBeforePreview(data);
-
-    if (error) {
-      setMsg('submitMsg', error, false);
-      return;
-    }
-
-    const body = new URLSearchParams({
-      className: data.className,
-      studentId: data.studentId,
-      studentName: data.studentName,
-      commonChoice: data.commonChoice,
-      fridayTime: data.fridayTime,
-      saturdayTime: data.saturdayTime,
-      returnTime: data.returnTime,
-      meals: data.meals.join('|'),
-      satOutingReason: data.satOutingReason,
-      satOutingDepartTime: data.satOutingDepartTime,
-      satOutingReturnTime: data.satOutingReturnTime,
-      sunOutingReason: data.sunOutingReason,
-      sunOutingDepartTime: data.sunOutingDepartTime,
-      sunOutingReturnTime: data.sunOutingReturnTime
+    
+    // 각 교시의 드롭다운 변경 이벤트 리스너
+    document.getElementById("period8").addEventListener("change", function() {
+      toggleOtherInput("period8", "otherPeriod8");
     });
-
-    setMsg('submitMsg', '저장 중입니다...', true);
-
-    fetch(SCRIPT_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
-      body: body.toString()
-    })
-      .then(r => r.json())
-      .then(res => {
-        if (res.ok) {
-          setMsg('submitMsg', res.message || '저장되었습니다.', true);
-          document.getElementById('previewCard').classList.add('hidden');
-        } else {
-          setMsg('submitMsg', res.error || '저장 중 오류가 발생했습니다.', false);
-        }
+    document.getElementById("period9").addEventListener("change", function() {
+      toggleOtherInput("period9", "otherPeriod9");
+    });
+    document.getElementById("period10").addEventListener("change", function() {
+      toggleOtherInput("period10", "otherPeriod10");
+    });
+    document.getElementById("period11").addEventListener("change", function() {
+      toggleOtherInput("period11", "otherPeriod11");
+    });
+    
+    // 폼 제출 이벤트 처리: 입력값을 서버로 전송
+    document.getElementById("attendanceForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      
+      const data = {
+        studentId: document.getElementById("studentId").value,
+        name: document.getElementById("name").value,
+        period8: document.getElementById("period8").value === "기타" ? document.getElementById("otherPeriod8").value : document.getElementById("period8").value,
+        period9: document.getElementById("period9").value === "기타" ? document.getElementById("otherPeriod9").value : document.getElementById("period9").value,
+        period10: document.getElementById("period10").value === "기타" ? document.getElementById("otherPeriod10").value : document.getElementById("period10").value,
+        period11: document.getElementById("period11").value === "기타" ? document.getElementById("otherPeriod11").value : document.getElementById("period11").value
+      };
+      
+      // 실제로 배포할 Apps Script 웹앱 URL로 변경
+      const scriptURL = "https://script.google.com/macros/s/AKfycbwqmE7Plmud5bDXgZ0g3VBM562wApFe5FrLY4qwLMOkrsQGV7PrE4VP8TO8FcSyOdX6UA/exec";
+      
+      fetch(scriptURL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(data)
+      })
+      .then(() => {
+        alert("제출되었습니다!");
+        this.reset();
+        // 추가 입력란 모두 숨기기
+        document.getElementById("otherPeriod8").style.display = "none";
+        document.getElementById("otherPeriod9").style.display = "none";
+        document.getElementById("otherPeriod10").style.display = "none";
+        document.getElementById("otherPeriod11").style.display = "none";
       })
       .catch(err => {
-        setMsg('submitMsg', err.message || String(err), false);
+        console.error(err);
+        alert("제출 중 오류가 발생했습니다.");
       });
-  }
-
-  function collectForm() {
-    const meals = Array.from(document.querySelectorAll('#mealChecks input[type="checkbox"]:checked'))
-      .map(el => el.value);
-
-    return {
-      className: val('className'),
-      studentId: val('studentId'),
-      studentName: val('studentName'),
-      commonChoice: val('commonChoice'),
-      fridayTime: val('fridayTime'),
-      saturdayTime: val('saturdayTime'),
-      returnTime: val('returnTime'),
-      meals,
-      satOutingReason: val('satOutingReason'),
-      satOutingDepartTime: val('satOutingDepartTime'),
-      satOutingReturnTime: val('satOutingReturnTime'),
-      sunOutingReason: val('sunOutingReason'),
-      sunOutingDepartTime: val('sunOutingDepartTime'),
-      sunOutingReturnTime: val('sunOutingReturnTime')
-    };
-  }
-
-  function clearMealChecks() {
-    document.querySelectorAll('#mealChecks input[type="checkbox"]').forEach(el => {
-      el.checked = false;
     });
-  }
-
-  function val(id) {
-    return document.getElementById(id).value.trim();
-  }
-
-  function toggle(id, show) {
-    document.getElementById(id).classList.toggle('hidden', !show);
-  }
-
-  function setMsg(id, text, ok) {
-    const el = document.getElementById(id);
-    el.textContent = text;
-    el.className = `msg ${ok ? 'ok' : 'err'}`;
-  }
-
-  function clearMsg(id) {
-    const el = document.getElementById(id);
-    el.textContent = '';
-    el.className = 'msg';
-  }
-
-  window.addEventListener('load', () => {
-    updateMealAvailability(val('commonChoice'));
-  });
-</script>
+  </script>
 </body>
 </html>
